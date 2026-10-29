@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Water Treatment System Maintenance - HDU SGH</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 20px;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .header img {
+      width: 110px;
+      height: auto;
+      margin-bottom: 10px;
+      border-radius: 50%;
+    }
+    h1 {
+      color: #007bff;
+      font-size: 1.7em;
+      margin: 0 0 5px 0;
+    }
+    h2 {
+      color: #6c757d;
+      font-size: 1.05em;
+      font-weight: normal;
+      margin: 0;
+    }
+    h3 {
+      margin-top: 25px;
+      color: #343a40;
+      border-bottom: 2px solid #007bff;
+      padding-bottom: 6px;
+      font-size: 1.15em;
+    }
+    
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 12px;
+      margin-bottom: 5px;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: #333;
+    }
+    .field-title {
+      white-space: nowrap;
+    }
+    .ref-tag {
+      font-weight: 500;
+      color: #0d6efd;
+      font-size: 0.88em;
+      white-space: nowrap;
+    }
+
+    input[type="text"], input[type="datetime-local"], input[type="file"], select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      margin-bottom: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+      background-color: #fff;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    ::placeholder {
+      color: #adb5bd;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+
+    .item-card {
+      background: #fdfdfd;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 16px 18px;
+      margin-bottom: 15px;
+    }
+    .item-card-header {
+      font-weight: 700;
+      color: #007bff;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .asset-row {
+      margin-bottom: 12px;
+    }
+    .asset-val {
+      font-size: 14px;
+      color: #212529;
+      margin-top: 2px;
+    }
+    .asset-divider {
+      border: 0;
+      border-top: 1px dashed #cbd5e1;
+      margin: 15px 0;
+    }
+
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: -6px;
+      margin-bottom: 10px;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+    .btn-submit {
+      background-color: #28a745;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      width: 70%;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .btn-submit:hover:not(:disabled) { background-color: #218838; }
+
+    .btn-cancel {
+      background-color: #6c757d;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+      width: 30%;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+    .btn-cancel:hover { background-color: #5a6268; }
+
+    /* Modals */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 28px 30px;
+      border-radius: 8px;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      animation: modalSlide 0.3s ease;
+    }
+    @keyframes modalSlide {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .notice-icon {
+      width: 60px;
+      height: 60px;
+      background: #fff3cd;
+      color: #856404;
+      border: 2px solid #ffeeba;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0 auto 15px auto;
+    }
+    .tick-icon {
+      width: 60px;
+      height: 60px;
+      background: #d4edda;
+      color: #28a745;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      margin: 0 auto 15px auto;
+    }
+
+    .notice-box {
+      text-align: left;
+      background-color: #fdfdfe;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #ffc107;
+      padding: 14px 16px;
+      margin: 15px 0 22px 0;
+      border-radius: 4px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #333;
+    }
+    .notice-box ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .notice-box li {
+      margin-bottom: 8px;
+    }
+    .notice-box li:last-child {
+      margin-bottom: 0;
+    }
+
+    #message-area {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 4px;
+      text-align: center;
+      display: none;
+      font-weight: bold;
+    }
+    .error { background-color: #ffe6e6; color: red; border: 1px solid red; }
+    .normal { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+    .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 15px;
+      border-top: 1px solid #ced4da;
+      font-size: 0.8em;
+      color: #6c757d;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .action-btns { flex-direction: column; }
+      .btn-submit, .btn-cancel { width: 100% !important; }
+      label { flex-direction: row; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Startup Notice Popup Modal -->
+<div id="noticeModal" class="modal" style="display: flex;">
+  <div class="modal-content">
+    <div class="notice-icon">!</div>
+    <h3 style="margin-top:0; color:#343a40; border:none; padding:0; font-size: 1.3em;">MAINTENANCE PROTOCOL NOTICE</h3>
+    <p style="font-size: 13px; color: #6c757d; margin: 4px 0 10px 0;">Standard Operating Protocol &bull; Planned & Corrective Maintenance</p>
+    
+    <div class="notice-box">
+      <ul>
+        <li><b>Work Order Verification:</b> All maintenance works must be accompanied by a signed and certified <b>Work Order (PDF)</b>. Uploading Work Order 1 is mandatory.</li>
+        <li><b>Pre/Post Operational Sanity:</b> Ensure RO System pressure, flow rates, and tank levels are verified and normalized before clearing the system back into clinical haemodialysis operation.</li>
+      </ul>
+    </div>
+
+    <button type="button" class="btn-submit" style="width: 100%; padding: 12px;" onclick="closeNoticeModal()">Acknowledge & Proceed</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <img src="https://lh3.googleusercontent.com/d/1tCDAMimy_b0x9kRmWNyYMn4voR9Ynr0J" alt="Logo">
+    <h1>WATER TREATMENT SYSTEM MAINTENANCE</h1>
+    <h2>Haemodialysis Unit, Sarawak General Hospital</h2>
+  </div>
+
+  <form id="maintForm">
+    <!-- Logged By & RO Select -->
+    <div class="grid-2">
+      <div>
+        <label for="loggedBy"><span class="field-title">Logged By</span></label>
+        <input type="text" id="loggedBy" placeholder="Hospital Support Service (BEMS) / Vendor Rep Name" required>
+      </div>
+      <div>
+        <label for="selectRo"><span class="field-title">Select RO System</span></label>
+        <select id="selectRo" required onchange="handleRoSelect(this.value)">
+          <option value="">-- Choose RO System --</option>
+          <option value="RO 01">RO 01</option>
+          <option value="RO 02">RO 02</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Structured Asset Details Card (Reveals upon selecting RO) -->
+    <div id="assetSection" class="item-card" style="display: none; background: #f8fafc;">
+      <div class="item-card-header">Asset Details</div>
+
+      <div class="asset-row" style="font-size: 15px;">
+        <b>RO No.:</b> <span id="astRo" style="font-weight: bold; color: #007bff;">-</span>
+      </div>
+
+      <div class="grid-3 asset-row">
+        <div>
+          <b>Brand:</b>
+          <div class="asset-val" id="astBrand">-</div>
+        </div>
+        <div>
+          <b>Model:</b>
+          <div class="asset-val" id="astModel">-</div>
+        </div>
+        <div>
+          <b>Serial No.:</b>
+          <div class="asset-val" id="astSerial">-</div>
+        </div>
+      </div>
+
+      <div class="grid-2 asset-row">
+        <div>
+          <b>KEW.PA No.:</b>
+          <div class="asset-val" id="astAsset">-</div>
+        </div>
+        <div>
+          <b>ASIS No.:</b>
+          <div class="asset-val" id="astAssis">-</div>
+        </div>
+      </div>
+
+      <div class="grid-2 asset-row" style="margin-bottom: 0;">
+        <div>
+          <b>Year made:</b> <span id="astYear" style="color:#212529;">-</span>
+        </div>
+        <div>
+          <b>Status:</b> <span id="astStatus" style="color:#212529;">-</span>
+        </div>
+      </div>
+
+      <hr class="asset-divider">
+
+      <div class="grid-2 asset-row" style="margin-bottom: 0;">
+        <div>
+          <b>Last Maintenance Date/Time:</b> <br><span id="astLastMaintDate" style="color:#212529; font-weight:600;">-</span>
+        </div>
+        <div>
+          <b>Last Logged By:</b> <br><span id="astLastMaintBy" style="color:#212529; font-weight:600;">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maintenance Activity Section -->
+    <div id="secMaintFields" style="display: none;">
+      <h3>MAINTENANCE ACTIVITY DETAILS</h3>
+
+      <div class="item-card">
+        <div class="item-card-header">Service Classification</div>
+        <div class="grid-2">
+          <div>
+            <label for="maintType"><span class="field-title">Type of Maintenance</span></label>
+            <select id="maintType" required onchange="updateFilePlaceholders()">
+              <option value="">-- Choose Type --</option>
+              <option value="PPM">Planned Preventive Maintenance (PPM)</option>
+              <option value="CM">Corrective Maintenance (CM)</option>
+            </select>
+          </div>
+          <div>
+            <label for="maintBy"><span class="field-title">Maintenance By</span></label>
+            <select id="maintBy" required>
+              <option value="">-- Service Provider --</option>
+              <option value="Hospital Support Service (BEMS)">Hospital Support Service (BEMS)</option>
+              <option value="Vendor Representative">Vendor Representative</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="item-card">
+        <div class="item-card-header">Task Execution & Schedule</div>
+        <div class="grid-3">
+          <div>
+            <label for="taskNo"><span class="field-title">Task No.</span></label>
+            <input type="text" id="taskNo" placeholder="e.g. WO-2026-9981" required>
+          </div>
+          <div>
+            <label for="startTime"><span class="field-title">Start Time / Date</span></label>
+            <input type="datetime-local" id="startTime" required>
+          </div>
+          <div>
+            <label for="completeTime"><span class="field-title">Complete Time / Date</span></label>
+            <input type="datetime-local" id="completeTime" required>
+          </div>
+        </div>
+
+        <div>
+          <label for="actionTaken">
+            <span class="field-title">Action Taken</span>
+            <span class="ref-tag">(Max 200 characters)</span>
+          </label>
+          <textarea id="actionTaken" maxlength="200" placeholder="Summarize service details, parts replaced, or adjustments executed..." oninput="updateCharCount(this)" required></textarea>
+          <div class="char-counter"><span id="charCount">0</span> / 200 characters</div>
+        </div>
+      </div>
+
+      <h3>SUPPORTING DOCUMENTATION UPLOAD (PDF)</h3>
+      <div class="item-card">
+        <div class="item-card-header">Work Order & Verification Files</div>
+
+        <!-- Document 1: Mandatory Work Order -->
+        <div>
+          <label for="fileDoc1">
+            <span class="field-title">1. Upload Work Order</span>
+            <span class="ref-tag" id="tagDoc1">(Mandatory &bull; PDF only)</span>
+          </label>
+          <input type="file" id="fileDoc1" accept="application/pdf" required>
+        </div>
+
+        <!-- Document 2: Optional Supportive Doc 1 -->
+        <div>
+          <label for="fileDoc2">
+            <span class="field-title">2. Supportive Document 1</span>
+            <span class="ref-tag" id="tagDoc2">(Optional)</span>
+          </label>
+          <input type="file" id="fileDoc2" accept="application/pdf">
+        </div>
+
+        <!-- Document 3: Optional Supportive Doc 2 -->
+        <div>
+          <label for="fileDoc3">
+            <span class="field-title">3. Supportive Document 2</span>
+            <span class="ref-tag" id="tagDoc3">(Optional)</span>
+          </label>
+          <input type="file" id="fileDoc3" accept="application/pdf">
+        </div>
+      </div>
+
+      <div class="action-btns">
+        <button type="submit" class="btn-submit" id="btnSubmit">Submit Maintenance Record</button>
+        <button type="button" class="btn-cancel" onclick="resetForm()">Cancel</button>
+      </div>
+    </div>
+
+    <div id="message-area"></div>
+  </form>
+
+  <div class="footer">
+    &copy; Designed and developed by PPP Zulfadlie bin Janie<br>
+    for Haemodialysis Unit, Sarawak General Hospital
+  </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal">
+  <div class="modal-content">
+    <div class="tick-icon">✓</div>
+    <h3 style="margin-top:0; color:#28a745; border:none; padding:0;">Maintenance Record Saved</h3>
+    <p id="modalMsg" style="font-size: 13.5px; color: #495057; margin: 10px 0 20px 0;"></p>
+    <button type="button" class="btn-submit" style="width: 100%;" onclick="closeSuccessModal()">OK</button>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_API_URL = "https://script.google.com/macros/s/AKfycbzjTF1xnQbgVw5P77C75KttOU04biG4DFKnIgQC7YOiI5EshGcCe0zugT6uWRIMU8HB8w/exec";
+
+  function closeNoticeModal() {
+    document.getElementById('noticeModal').style.display = "none";
+  }
+
+  function updateCharCount(el) {
+    document.getElementById('charCount').textContent = el.value.length;
+  }
+
+  function formatDisplayDateTime(val) {
+    if (!val) return "";
+    const d = new Date(val);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = String(d.getFullYear()).slice(-2);
+    const hours = String(d.getHours()).padStart(2, '0');
+    const mins = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${mins}`;
+  }
+
+  function handleRoSelect(val) {
+    if (!val) {
+      document.getElementById('assetSection').style.display = "none";
+      document.getElementById('secMaintFields').style.display = "none";
+      hideMessage();
+      return;
+    }
+
+    showMessage("Loading asset specifications and last maintenance history...", "normal");
+    fetch(SCRIPT_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "getMaintenanceAssetDetails", payload: { roNo: val } })
+    })
+    .then(r => r.json())
+    .then(res => {
+      hideMessage();
+      if (res.success) {
+        populateAssetBlock(res.asset, res.lastMaintenance);
+        document.getElementById('secMaintFields').style.display = "block";
+        updateFilePlaceholders();
+      } else {
+        showMessage("Error loading asset details: " + res.error, "error");
+      }
+    })
+    .catch(err => showMessage("Asset load error: " + err, "error"));
+  }
+
+  function populateAssetBlock(asset, lastMaint) {
+    document.getElementById('astRo').textContent = asset.roNo;
+    document.getElementById('astBrand').textContent = asset.brand;
+    document.getElementById('astModel').textContent = asset.model;
+    document.getElementById('astSerial').textContent = asset.serialNo;
+    document.getElementById('astAsset').textContent = asset.assetNo;
+    document.getElementById('astAssis').textContent = asset.assisNo;
+    document.getElementById('astYear').textContent = asset.yearMade;
+    document.getElementById('astStatus').textContent = asset.status;
+
+    document.getElementById('astLastMaintDate').textContent = lastMaint ? lastMaint.date : "No records found";
+    document.getElementById('astLastMaintBy').textContent = lastMaint ? lastMaint.by : "-";
+
+    document.getElementById('assetSection').style.display = "block";
+  }
+
+  function updateFilePlaceholders() {
+    const ro = document.getElementById('selectRo').value.replace(/\s+/g, '').toUpperCase() || "ROXX";
+    const type = document.getElementById('maintType').value || "PPM";
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+
+    document.getElementById('tagDoc1').textContent = `Mandatory`;
+    document.getElementById('tagDoc2').textContent = `Optional`;
+    document.getElementById('tagDoc3').textContent = `Optional`;
+  }
+
+  function readFileAsBase64(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        resolve(null);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const b64 = reader.result.split(',')[1];
+        resolve({
+          fileName: file.name,
+          mimeType: file.type,
+          base64: b64
+        });
+      };
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('maintForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const file1 = document.getElementById('fileDoc1').files[0];
+    const file2 = document.getElementById('fileDoc2').files[0];
+    const file3 = document.getElementById('fileDoc3').files[0];
+
+    const MAX_SIZE = 10 * 1024 * 1024;
+    if (file1 && file1.size > MAX_SIZE) {
+      alert("Work Order PDF exceeds 10MB limit. Please compress file.");
+      return;
+    }
+    if (file2 && file2.size > MAX_SIZE) {
+      alert("Supportive Document 1 exceeds 10MB limit.");
+      return;
+    }
+    if (file3 && file3.size > MAX_SIZE) {
+      alert("Supportive Document 2 exceeds 10MB limit.");
+      return;
+    }
+
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true;
+    btn.textContent = "Encoding files and recording entry...";
+    showMessage("Encoding documents and uploading...", "normal");
+
+    try {
+      const [doc1Data, doc2Data, doc3Data] = await Promise.all([
+        readFileAsBase64(file1),
+        readFileAsBase64(file2),
+        readFileAsBase64(file3)
+      ]);
+
+      const payload = {
+        loggedBy: document.getElementById('loggedBy').value.trim(),
+        roNo: document.getElementById('selectRo').value,
+        type: document.getElementById('maintType').value,
+        maintBy: document.getElementById('maintBy').value,
+        taskNo: document.getElementById('taskNo').value.trim(),
+        startDateTime: formatDisplayDateTime(document.getElementById('startTime').value),
+        completeDateTime: formatDisplayDateTime(document.getElementById('completeTime').value),
+        actionTaken: document.getElementById('actionTaken').value.trim(),
+        files: {
+          doc1: doc1Data,
+          doc2: doc2Data,
+          doc3: doc3Data
+        }
+      };
+
+      const res = await fetch(SCRIPT_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "saveMaintenanceLog", payload: payload })
+      }).then(r => r.json());
+
+      btn.disabled = false;
+      btn.textContent = "Submit Maintenance Record";
+
+      if (res.success) {
+        document.getElementById('modalMsg').textContent = res.message;
+        document.getElementById('successModal').style.display = "flex";
+      } else {
+        showMessage("Submission Error: " + res.error, "error");
+      }
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = "Submit Maintenance Record";
+      showMessage("Processing error: " + err, "error");
+    }
+  });
+
+  function resetForm() {
+    document.getElementById('maintForm').reset();
+    document.getElementById('assetSection').style.display = "none";
+    document.getElementById('secMaintFields').style.display = "none";
+    document.getElementById('charCount').textContent = "0";
+    hideMessage();
+  }
+
+  function closeSuccessModal() {
+    document.getElementById('successModal').style.display = "none";
+    resetForm();
+  }
+
+  function showMessage(text, type) {
+    const msg = document.getElementById('message-area');
+    msg.style.display = "block";
+    msg.textContent = text;
+    msg.className = type === "error" ? "error" : (type === "success" ? "success" : "normal");
+  }
+
+  function hideMessage() {
+    document.getElementById('message-area').style.display = "none";
+  }
+</script>
+
+</body>
+</html>
